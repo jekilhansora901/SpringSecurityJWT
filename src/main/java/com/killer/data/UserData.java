@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +22,8 @@ import lombok.Value;
 @Data
 @Value
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(force = true)
+@Builder(toBuilder = true)
 @Setter
 @ToString
 public class UserData implements UserDetails{
@@ -83,9 +81,6 @@ public class UserData implements UserDetails{
 		return userName;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	
 	
 }

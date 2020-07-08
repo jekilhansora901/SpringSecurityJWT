@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.killer.assembler.UserAssembler;
 import com.killer.data.UserData;
+import com.killer.domain.User;
+import com.killer.domain.UserLogin;
 import com.killer.service.UserServiceImpl;
 
 @RestController
@@ -17,31 +20,33 @@ import com.killer.service.UserServiceImpl;
 public class UserController {
 
 	private UserServiceImpl userServiceImpl;
+	private UserAssembler userAssembler;
 	
 	@Autowired
-	public UserController(UserServiceImpl userServiceImpl) {
+	public UserController(UserServiceImpl userServiceImpl, UserAssembler userAssembler) {
 		super();
 		this.userServiceImpl = userServiceImpl;
+		this.userAssembler = userAssembler;
 	}
 
 
 
 	@PostMapping("/user/registration")
-	public UserData register(@RequestBody UserData userReq) {
-		UserData resp = userServiceImpl.registerUser(userReq);
-		return resp;
+	public User register(@RequestBody UserData userReq) {
+		UserData userData = userServiceImpl.registerUser(userReq);
+		return this.userAssembler.writeUser(userData);
 	}
 	
 	@PostMapping("/user/login")
-	public JSONObject login(@RequestBody UserData userReq) {
-		JSONObject resp = userServiceImpl.login(userReq);
+	public JSONObject login(@RequestBody UserLogin userReq) {
+		UserData userData = this.userAssembler.writeUserData(userReq);
+		JSONObject resp = userServiceImpl.login(userData);
 		return resp;
 	}
 	
 	@GetMapping("/user/{userId}")
-	public UserData getUser(@PathVariable("userId") Long userId) {
-		UserData resp = userServiceImpl.getUser(userId);
-		
-		return resp;
+	public User getUser(@PathVariable("userId") Long userId) {
+		UserData userData = userServiceImpl.getUser(userId);
+		return this.userAssembler.writeUser(userData);
 	}
 }

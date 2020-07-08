@@ -38,7 +38,7 @@ public class UserServiceImpl  implements UserDetailsService {
 	PasswordEncoder encoder;
 	
 	public UserData registerUser(UserData userReq) {
-		userReq.setPassword(encoder.encode(userReq.getPassword()));
+		userReq = userReq.toBuilder().password(encoder.encode(userReq.getPassword())).build();
 		UserData user = userRepository.save(userReq);
 		
 		return user;

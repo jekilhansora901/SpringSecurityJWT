@@ -1,7 +1,6 @@
 package com.killer.config;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,8 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.killer.data.UserData;
-import com.killer.repository.UserRepository;
 import com.killer.service.UserServiceImpl;
 
 public class AuthRequestFilter extends OncePerRequestFilter {
