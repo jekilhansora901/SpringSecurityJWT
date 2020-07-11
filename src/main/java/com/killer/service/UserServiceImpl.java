@@ -1,6 +1,7 @@
 package com.killer.service;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 import org.json.simple.JSONObject;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.killer.assembler.UserAssembler;
 import com.killer.config.JwtUtil;
 import com.killer.data.UserData;
 import com.killer.repository.UserRepository;
@@ -36,6 +38,9 @@ public class UserServiceImpl  implements UserDetailsService {
 	
 	@Autowired
 	PasswordEncoder encoder;
+	
+	@Autowired
+	private UserAssembler userAssembler;
 	
 	public UserData registerUser(UserData userReq) {
 		userReq = userReq.toBuilder().password(encoder.encode(userReq.getPassword())).build();
@@ -94,6 +99,33 @@ public class UserServiceImpl  implements UserDetailsService {
 		} else {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
+	}
+
+	public UserData updateUser(Long userId, UserData userReq) {
+		
+		UserData user = this.getUser(userId);
+		
+		if(user != null) {
+			userReq = userReq.toBuilder().id(userId).password(user.getPassword()).build();
+			UserData updatedUser = userRepository.save(userReq);
+			return updatedUser;
+		} 
+		return null;
+	}
+
+	public UserData patchUser(Long userId, Map<String, Object> userReq) {
+		UserData user = this.getUser(userId);
+		
+		if(user != null) {
+			UserData updatedUser = userAssembler.writeUserData(userReq, user);
+			
+			updatedUser = updatedUser.toBuilder().id(userId).build();
+			
+			updatedUser = userRepository.save(updatedUser);
+			
+			return updatedUser;
+		}
+		return null;
 	}
 	
 }
